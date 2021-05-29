@@ -10,6 +10,7 @@ variables:
   vmImageName: 'ubuntu-latest'
   artifactWebApp: 'apiCalculoIMC'
   azureWebAppName: 'anpcalculoimc'
+  testProject: '**/Calculos.Common.Tests.csproj'
 
 stages:
 - stage: Tests
@@ -24,7 +25,7 @@ stages:
       displayName: Executar Testes com geração de arquivo com a cobertura
       inputs:
         command: 'test'
-        projects: '**/Calculos.Common.Tests.csproj'
+        projects: $(testProject)
         arguments: '--verbosity minimal --collect:"XPlat Code Coverage"'
         testRunTitle: 'Execução de Testes em .NET'
     - script: dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.8.9
@@ -36,7 +37,7 @@ stages:
     - script: |
         cd $(Build.SourcesDirectory)/coveragereport
         ls
-      displayName: Listar arquivo XML gerado
+      displayName: Exibir arquivo XML gerado
       condition: always()
     - task: PublishCodeCoverageResults@1  
       displayName: 'Publicar cobertura de código'
@@ -83,7 +84,7 @@ stages:
     - task: AzureWebApp@1
       displayName: Deployment da Web App no Azure App Service em Linux
       inputs:
-        azureSubscription: 'AZURE-SUBSCRIPTION'
+        azureSubscription: 'Microsoft Azure Sponsorship(f3e7d90b-efba-4481-ac3d-d8df26b6235d)'
         appType: 'webAppLinux'
         appName: $(azureWebAppName)
         package: '$(System.DefaultWorkingDirectory)/publish/*.zip'
